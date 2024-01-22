@@ -1,34 +1,69 @@
 from pytube import YouTube
 import os
-from tkinter import *
-from tkinter import messagebox as Messagebox
+import tkinter
+import customtkinter
 
-print(os.getcwd())
+download_folder=os.path.join(os.path.expanduser('~'), 'Downloads')
 
-carpeta_descarga=os.path.join(os.path.expanduser('~'), 'Downloads')
+def startDownload():
+    try:
+        ytlink = link.get()
+        ytObject = YouTube(ytlink, on_progress_callback=on_progress)
+        video = ytObject.streams.get_highest_resolution()
+        
+        title.configure(text=ytObject.title, text_color="white")
+        finishLabel.configure(text="")
+        video.download(download_folder)
+        finishLabel.configure(text="Downloaded!")
+    except:
+        finishLabel.configure(text=" Youtube link is invalid ", text_color="red")
 
-def accion():
-    enlace=videos.get()
-    video= YouTube(enlace)
-    descarga = video.streams.get_highest_resolution()
-    descarga.download(carpeta_descarga)
+def on_progress(stream, chunck, bytes_remaining):
+    total_size = stream.filesize
+    bytes_downloaded = total_size - bytes_remaining
+    percentage_of_completition = bytes_downloaded / total_size * 100
+    per = str(int(percentage_of_completition))
+    pPercentage.configure(text=per + "%")
+    pPercentage.update()
     
-def popup():
-    Messagebox.showinfo("Hola","Hola")
+    #Update progress bar
+    progressBar.set(float(percentage_of_completition) / 100)
+    progressBar.update()
+    
 
+#System settings
+customtkinter.set_appearance_mode("System")
+customtkinter.set_default_color_theme("blue")
 
-root = Tk()
-root.config(bd=15)
-root.title("Script descargar videos")
+#App frame
 
-instruccion = Label(root, text="Script creado en Python para poder descargar videos de Youtube\n")
-instruccion.grid(row=0,column=1)
+app = customtkinter.CTk()
+app.geometry("720x480")
+app.title(" Youtube Downloader ")
 
-videos= Entry(root)
-videos.grid
-videos.grid(row=1,column=1)
+#Adding UI Elements
+title = customtkinter.CTkLabel(app,text="Insert a YoutubeL Link")
+title.pack(padx=10,pady=10)
 
-boton = Button(root, text="Descargar", command=accion)
-boton.grid(row=2,column=1)
+#Link input
+url_var = tkinter.StringVar()
+link = customtkinter.CTkEntry(app, width=350, height=20, textvariable=url_var)
+link.pack()
 
-root.mainloop()
+#Finished downloading
+finishLabel = customtkinter.CTkLabel(app, text="")
+finishLabel.pack()
+
+#Progress Button
+pPercentage= customtkinter.CTkLabel(app,text="0%")
+pPercentage.pack()
+
+progressBar = customtkinter.CTkProgressBar(app,width=400)
+progressBar.set(0)
+progressBar.pack(padx=10,pady=10)
+
+#Download button
+download = customtkinter.CTkButton(app, text="Download", command=startDownload)
+download.pack(padx=10,pady=10)
+#Run app 
+app.mainloop()
