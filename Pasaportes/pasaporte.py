@@ -22,6 +22,9 @@ click_Realizar_Pago.click()
 time.sleep(1)
 click_Confirmar_Pago = driver.find_element(By.XPATH, '//*[@id="modalPago"]/div/div/div[3]/a').click()
 time.sleep(3)
+
+
+#Datos para sacar la cita - se deben cambiar en queda instancia
 #insertar_Cedula = driver.find_element(By.XPATH, '------------------INSERTAR XPATH--------------').send_keys(INSERTAR)
 
 #seleccionar_identificacion = driver.find_element(By.XPATH, '------------------INSERTAR XPATH--------------').send_keys(INSERTAR)
